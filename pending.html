@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MLBB - စောင့်ဆိုင်းနေသည်</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0b0e1a;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 40px;
+            padding: 48px 40px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+        }
+        .card .icon {
+            font-size: 64px;
+            color: #ffd700;
+            margin-bottom: 16px;
+        }
+        .card h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+        .card h1 span {
+            color: #ffd700;
+        }
+        .card .sub {
+            color: #99a;
+            font-size: 15px;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+        .card .btn {
+            display: inline-flex;
+            padding: 14px 32px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #ffd700, #f5a623);
+            color: #0b0e1a;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 8px 24px rgba(255, 215, 0, 0.15);
+            transition: 0.3s;
+            margin-top: 8px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+        }
+        .card .btn:hover {
+            transform: translateY(-2px);
+        }
+        .card .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #ccd;
+            box-shadow: none;
+        }
+        .card .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .footer-note {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            color: #556;
+            font-size: 12px;
+        }
+        .footer-note span {
+            color: #ffd700;
+        }
+        @media (max-width: 480px) {
+            .card {
+                padding: 32px 24px;
+                border-radius: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon"><i class="fas fa-clock"></i></div>
+        <h1>⏳ <span>စောင့်ဆိုင်း</span>နေသည်</h1>
+        <p class="sub">
+            သင့် Screenshot များကို <strong style="color:#ffd700;">စစ်ဆေးနေဆဲ</strong> ဖြစ်ပါသည်။<br />
+            အတည်ပြုပြီးပါက သင့်အား အကြောင်းကြားပါမည်။
+        </p>
+        <p style="color:#556;font-size:14px;margin-bottom:16px;">
+            <i class="fas fa-spinner fa-spin" style="color:#ffd700;"></i>
+            ပုံမှန်အားဖြင့် ၂၄ နာရီအတွင်း ပြန်လည်အကြောင်းကြားပါမည်။
+        </p>
+        <a href="index.html" class="btn"><i class="fas fa-home"></i> ပင်မစာမျက်နှာ</a>
+        <a href="profile.html" class="btn btn-outline"><i class="fas fa-user"></i> Profile</a>
+        <div class="footer-note">
+            <i class="fas fa-crown" style="color:#ffd700;"></i> MLBB ၁၀ နှစ် <span>Giveaway</span>
+        </div>
+    </div>
+</body>
+</html>

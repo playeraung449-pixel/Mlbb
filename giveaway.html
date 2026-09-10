@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MLBB Giveaway - Screenshot တင်ရန်</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        /* ===== RESET ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0b0e1a;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ===== BACKGROUND GLOW ===== */
+        .bg-glow {
+            position: fixed;
+            top: -30%;
+            left: -20%;
+            width: 70%;
+            height: 70%;
+            background: radial-gradient(ellipse, rgba(255, 215, 0, 0.05), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow-2 {
+            position: fixed;
+            bottom: -30%;
+            right: -20%;
+            width: 70%;
+            height: 70%;
+            background: radial-gradient(ellipse, rgba(255, 70, 70, 0.03), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 20px 24px 60px;
+        }
+
+        /* ===== BACK BUTTON ===== */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: #99a;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.3s;
+            padding: 10px 0 20px;
+        }
+
+        .back-btn:hover {
+            color: #ffd700;
+        }
+
+        /* ===== HEADER ===== */
+        .page-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(26px, 4vw, 38px);
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .page-header h1 .highlight {
+            color: #ffd700;
+        }
+
+        .page-header p {
+            color: #99a;
+            font-size: 15px;
+        }
+
+        /* ===== CARD ===== */
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 24px;
+            padding: 28px 24px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h3 i {
+            color: #ffd700;
+        }
+
+        .card .label {
+            font-size: 14px;
+            color: #99a;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        /* ===== FILE UPLOAD ===== */
+        .file-upload-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .file-upload-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .file-upload-box {
+            width: 100%;
+            padding: 24px 16px;
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            text-align: center;
+            color: #778;
+            transition: 0.3s;
+            background: rgba(255, 255, 255, 0.02);
+            cursor: pointer;
+        }
+
+        .file-upload-box:hover {
+            border-color: rgba(255, 215, 0, 0.3);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .file-upload-box.has-file {
+            border-color: #51cf66;
+            background: rgba(50, 255, 50, 0.04);
+        }
+
+        .file-upload-box i {
+            font-size: 32px;
+            color: #556;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .file-upload-box .file-name {
+            color: #fff;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .file-upload-box .file-hint {
+            font-size: 13px;
+            color: #556;
+        }
+
+        /* ===== INPUT ===== */
+        .form-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-input:focus {
+            border-color: #ffd700;
+            background: rgba(255, 255, 255, 0.07);
+            box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.05);
+        }
+
+        .form-input::placeholder {
+            color: #556;
+        }
+
+        /* ===== SUBMIT BUTTON ===== */
+        .btn-submit {
+            width: 100%;
+            padding: 18px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #ffd700, #f5a623);
+            color: #0b0e1a;
+            font-size: 20px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 48px rgba(255, 215, 0, 0.35);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-submit .spinner {
+            display: none;
+            width: 22px;
+            height: 22px;
+            border: 3px solid rgba(11, 14, 26, 0.15);
+            border-top-color: #0b0e1a;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        .btn-submit.loading .spinner {
+            display: block;
+        }
+        .btn-submit.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== STATUS MESSAGE ===== */
+        .status-msg {
+            margin-top: 16px;
+            padding: 14px 18px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-msg.error {
+            display: block;
+            background: rgba(255, 50, 50, 0.1);
+            border: 1px solid rgba(255, 50, 50, 0.15);
+            color: #ff6b6b;
+        }
+
+        .status-msg.success {
+            display: block;
+            background: rgba(50, 255, 50, 0.08);
+            border: 1px solid rgba(50, 255, 50, 0.12);
+            color: #51cf66;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer-note {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            text-align: center;
+            color: #556;
+            font-size: 12px;
+        }
+
+        .footer-note span {
+            color: #ffd700;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px 16px 40px;
+            }
+            .card {
+                padding: 20px 16px;
+            }
+            .btn-submit {
+                font-size: 17px;
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== BACKGROUND ===== -->
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+
+    <!-- ===== CONTAINER ===== -->
+    <div class="container">
+
+        <!-- ===== BACK BUTTON ===== -->
+        <a href="info.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> နောက်သို့
+        </a>
+
+        <!-- ===== HEADER ===== -->
+        <div class="page-header">
+            <h1>
+                <span class="highlight">Screenshot</span> တင်ရန်
+            </h1>
+            <p>Task များ ပြီးဆုံးပါက အောက်ပါပုံများကို တင်ပြပါ</p>
+        </div>
+
+        <!-- ===== FORM ===== -->
+        <form id="submitForm" enctype="multipart/form-data">
+
+            <!-- ===== SCREENSHOT 1 ===== -->
+            <div class="card">
+                <h3><i class="fas fa-image"></i> ၁. ၅ ပွဲဆက်တိုက်နိုင်ထားသော ပုံ</h3>
+                <span class="label">Rank ပွဲ ၅ ပွဲ ဆက်တိုက်အနိုင်ရထားတဲ့ Screenshot</span>
+                <div class="file-upload-wrapper">
+                    <input type="file" id="screenshot1" accept="image/*" required />
+                    <div class="file-upload-box" id="fileBox1">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <div class="file-name" id="fileName1">ပုံရွေးချယ်ပါ</div>
+                        <div class="file-hint">JPG, PNG, WebP (Max 5MB)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== SCREENSHOT 2 ===== -->
+            <div class="card">
+                <h3><i class="fas fa-image"></i> ၂. Layla MVP ၁၀ ကြိမ်ရထားသော ပုံ</h3>
+                <span class="label">Layla ဖြင့် MVP ၁၀ ကြိမ်ရထားတဲ့ Screenshot</span>
+                <div class="file-upload-wrapper">
+                    <input type="file" id="screenshot2" accept="image/*" required />
+                    <div class="file-upload-box" id="fileBox2">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <div class="file-name" id="fileName2">ပုံရွေးချယ်ပါ</div>
+                        <div class="file-hint">JPG, PNG, WebP (Max 5MB)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== USER ID / SERVER ID ===== -->
+            <div class="card">
+                <h3><i class="fas fa-id-card"></i> သင်၏ ID / Server ID</h3>
+                <span class="label">
+                    သင်၏ ဆော့ထားသောပွဲစဉ်များမှန်ကန်ကြောင်းကို 
+                    ကျွန်ုပ်ဘက်မှအတည်ပြုဖို့လိုအပ်ပါသဖြင့် အောက်ပါအချက်များကို ဖြည့်ပါ။
+                </span>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:10px;">
+                    <div>
+                        <label style="font-size:13px; color:#99a; display:block; margin-bottom:4px;">
+                            <i class="fas fa-user"></i> User ID
+                        </label>
+                        <input type="text" id="userId" class="form-input" placeholder="သင့် User ID" required />
+                    </div>
+                    <div>
+                        <label style="font-size:13px; color:#99a; display:block; margin-bottom:4px;">
+                            <i class="fas fa-server"></i> Server ID
+                        </label>
+                        <input type="text" id="serverId" class="form-input" placeholder="သင့် Server ID" required />
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== SUBMIT ===== -->
+            <button type="submit" class="btn-submit" id="submitBtn">
+                <span class="btn-text"><i class="fas fa-paper-plane"></i> တင်ပြမည်</span>
+                <span class="spinner"></span>
+            </button>
+
+            <!-- ===== STATUS ===== -->
+            <div id="statusMsg" class="status-msg"></div>
+
+        </form>
+
+        <!-- ===== FOOTER ===== -->
+        <div class="footer-note">
+            <i class="fas fa-crown" style="color:#ffd700;"></i>
+            MLBB ၁၀ နှစ်ပြည့် Giveaway &bull; <span>စိန် ၁၀,၀၀၀</span>
+        </div>
+
+    </div>
+
+    <!-- ===== FIREBASE + TELEGRAM ===== -->
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
+                "firebase/auth": "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js",
+                "firebase/database": "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js",
+                "firebase/storage": "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        // ===== IMPORTS =====
+        import { initializeApp } from "firebase/app";
+        import { getAuth, onAuthStateChanged } from "firebase/auth";
+        import { getDatabase, ref, push, set } from "firebase/database";
+        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+
+        // ===== FIREBASE CONFIG =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyDvJZva02_lv1ux8fo_uOqJ0mGEyD2h7eQ",
+            authDomain: "mlbb-f9540.firebaseapp.com",
+            projectId: "mlbb-f9540",
+            storageBucket: "mlbb-f9540.firebasestorage.app",
+            messagingSenderId: "935231587712",
+            appId: "1:935231587712:web:6f1a9895f5289254aeed65",
+            measurementId: "G-XC6G5NCQ5N"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        const storage = getStorage(app);
+
+        // ===== TELEGRAM CONFIG =====
+        const BOT_TOKEN = '8774153378:AAEswQG_pAIxZ1b_6IVFQVFI5STadHy3X_4';
+        const ADMIN_ID = '6427719618';
+        const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
+
+        // ===== DOM REFS =====
+        const form = document.getElementById('submitForm');
+        const file1 = document.getElementById('screenshot1');
+        const file2 = document.getElementById('screenshot2');
+        const fileBox1 = document.getElementById('fileBox1');
+        const fileBox2 = document.getElementById('fileBox2');
+        const fileName1 = document.getElementById('fileName1');
+        const fileName2 = document.getElementById('fileName2');
+        const userId = document.getElementById('userId');
+        const serverId = document.getElementById('serverId');
+        const submitBtn = document.getElementById('submitBtn');
+        const statusMsg = document.getElementById('statusMsg');
+
+        // ===== FILE UPLOAD UI =====
+        function setupFileUpload(input, box, nameEl) {
+            input.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    const file = this.files[0];
+                    nameEl.textContent = file.name;
+                    box.classList.add('has-file');
+                } else {
+                    nameEl.textContent = 'ပုံရွေးချယ်ပါ';
+                    box.classList.remove('has-file');
+                }
+            });
+        }
+        setupFileUpload(file1, fileBox1, fileName1);
+        setupFileUpload(file2, fileBox2, fileName2);
+
+        // ===== SHOW STATUS =====
+        function showStatus(msg, type = 'error') {
+            statusMsg.textContent = msg;
+            statusMsg.className = `status-msg ${type}`;
+            if (msg) {
+                statusMsg.style.display = 'block';
+            } else {
+                statusMsg.style.display = 'none';
+            }
+        }
+
+        // ===== CONVERT FILE TO BASE64 =====
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+            });
+        }
+
+        // ===== SEND TO TELEGRAM =====
+        async function sendToTelegram(imageBase64, caption, userId, serverId) {
+            const formData = new FormData();
+            // Convert base64 to Blob
+            const res = await fetch(imageBase64);
+            const blob = await res.blob();
+            formData.append('photo', blob, 'screenshot.jpg');
+            formData.append('chat_id', ADMIN_ID);
+            formData.append('caption', caption);
+
+            const response = await fetch(TELEGRAM_API, {
+                method: 'POST',
+                body: formData
+            });
+
+            return response.ok;
+        }
+
+        // ===== FORM SUBMIT =====
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showStatus('', '');
+
+            const uid = userId.value.trim();
+            const sid = serverId.value.trim();
+
+            if (!uid || !sid) {
+                showStatus('ကျေးဇူးပြု၍ User ID နှင့် Server ID ကို ဖြည့်ပါ။', 'error');
+                return;
+            }
+
+            if (!file1.files.length || !file2.files.length) {
+                showStatus('ကျေးဇူးပြု၍ Screenshot နှစ်ပုံလုံးကို ရွေးချယ်ပါ။', 'error');
+                return;
+            }
+
+            // Get current user
+            const user = auth.currentUser;
+            if (!user) {
+                showStatus('ကျေးဇူးပြု၍ အကောင့်ဝင်ပါ။ (Login လုပ်ပါ)', 'error');
+                return;
+            }
+
+            // ===== LOADING =====
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+
+            try {
+                // ===== UPLOAD TO FIREBASE STORAGE =====
+                const timestamp = Date.now();
+                const userEmail = user.email.replace(/[^a-zA-Z0-9]/g, '_');
+
+                const file1Ref = storageRef(storage, `screenshots/${userEmail}/${timestamp}_screenshot1_${file1.files[0].name}`);
+                const file2Ref = storageRef(storage, `screenshots/${userEmail}/${timestamp}_screenshot2_${file2.files[0].name}`);
+
+                const [snap1, snap2] = await Promise.all([
+                    uploadBytes(file1Ref, file1.files[0]),
+                    uploadBytes(file2Ref, file2.files[0])
+                ]);
+
+                const [url1, url2] = await Promise.all([
+                    getDownloadURL(snap1.ref),
+                    getDownloadURL(snap2.ref)
+                ]);
+
+                // ===== SAVE TO FIREBASE DATABASE =====
+                const submissionRef = ref(db, 'giveaway_submissions');
+                const newRef = push(submissionRef);
+                await set(newRef, {
+                    userId: uid,
+                    serverId: sid,
+                    userEmail: user.email,
+                    screenshot1: url1,
+                    screenshot2: url2,
+                    timestamp: timestamp,
+                    status: 'pending',
+                    submittedAt: new Date().toISOString()
+                });
+
+                // ===== SEND TO TELEGRAM =====
+                const caption = `
+🎮 MLBB Giveaway Submission
+
+👤 User: ${user.email}
+🆔 User ID: ${uid}
+🔢 Server ID: ${sid}
+📅 Submitted: ${new Date().toLocaleString()}
+
+📸 Screenshot 1: ၅ ပွဲဆက်တိုက်နိုင်
+📸 Screenshot 2: Layla MVP ၁၀ ကြိမ်
+
+✅ အတည်ပြုရန် စောင့်ဆိုင်းနေသည်...
+                `;
+
+                // Convert to base64 for Telegram
+                const base1 = await fileToBase64(file1.files[0]);
+                const base2 = await fileToBase64(file2.files[0]);
+
+                // Send first photo
+                await sendToTelegram(base1, `📸 Screenshot 1 (၅ ပွဲဆက်တိုက်နိုင်)\nUser: ${user.email}\nID: ${uid}\nServer: ${sid}`, uid, sid);
+
+                // Send second photo
+                await sendToTelegram(base2, `📸 Screenshot 2 (Layla MVP ၁၀ ကြိမ်)\nUser: ${user.email}\nID: ${uid}\nServer: ${sid}`, uid, sid);
+
+                // ===== SUCCESS =====
+                showStatus('✅ အောင်မြင်စွာ တင်ပြပြီး! ကျေးဇူးပြု၍ အတည်ပြုချက်ကို စောင့်ပါ။', 'success');
+                form.reset();
+                fileBox1.classList.remove('has-file');
+                fileBox2.classList.remove('has-file');
+                fileName1.textContent = 'ပုံရွေးချယ်ပါ';
+                fileName2.textContent = 'ပုံရွေးချယ်ပါ';
+                userId.value = '';
+                serverId.value = '';
+
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus('❌ တစ်ခုခု မှားနေသည်။ နောက်မှ ထပ်ကြိုးစားပါ။ ' + error.message, 'error');
+            }
+
+            // ===== REMOVE LOADING =====
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        });
+
+        // ===== CHECK AUTH =====
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                showStatus('⚠️ ကျေးဇူးပြု၍ အကောင့်ဝင်ပါ။ (Login လုပ်ပါ)', 'error');
+            } else {
+                showStatus('', '');
+            }
+        });
+
+        console.log('✅ giveaway.html loaded');
+    </script>
+
+</body>
+</html>

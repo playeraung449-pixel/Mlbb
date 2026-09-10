@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MLBB - Admin Panel</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        /* ===== RESET ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0b0e1a;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ===== BACKGROUND GLOW ===== */
+        .bg-glow {
+            position: fixed;
+            top: -30%;
+            left: -20%;
+            width: 70%;
+            height: 70%;
+            background: radial-gradient(ellipse, rgba(255, 215, 0, 0.05), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow-2 {
+            position: fixed;
+            bottom: -30%;
+            right: -20%;
+            width: 70%;
+            height: 70%;
+            background: radial-gradient(ellipse, rgba(255, 70, 70, 0.03), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px 24px 60px;
+        }
+
+        /* ===== TOP BAR ===== */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            margin-bottom: 28px;
+        }
+
+        .top-bar .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 22px;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .top-bar .logo span {
+            color: #ffd700;
+        }
+
+        .top-bar .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .top-bar .admin-info .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffd700, #f5a623);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0b0e1a;
+        }
+
+        .top-bar .admin-info .email {
+            color: #99a;
+            font-size: 14px;
+        }
+
+        .btn-logout {
+            padding: 8px 20px;
+            border-radius: 30px;
+            background: rgba(255, 50, 50, 0.1);
+            border: 1px solid rgba(255, 50, 50, 0.15);
+            color: #ff6b6b;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 50, 50, 0.2);
+        }
+
+        /* ===== STATS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 18px 20px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: #ffd700;
+        }
+
+        .stat-card .label {
+            font-size: 13px;
+            color: #778;
+            margin-top: 2px;
+        }
+
+        .stat-card.pending .number {
+            color: #ffd700;
+        }
+        .stat-card.approved .number {
+            color: #51cf66;
+        }
+        .stat-card.rejected .number {
+            color: #ff6b6b;
+        }
+        .stat-card.total .number {
+            color: #fff;
+        }
+
+        /* ===== TABS ===== */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 24px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: transparent;
+            color: #99a;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .tab-btn:hover {
+            border-color: rgba(255, 215, 0, 0.15);
+            color: #fff;
+        }
+
+        .tab-btn.active {
+            background: rgba(255, 215, 0, 0.08);
+            border-color: rgba(255, 215, 0, 0.15);
+            color: #ffd700;
+        }
+
+        /* ===== SUBMISSION LIST ===== */
+        .submission-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .submission-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            transition: 0.3s;
+        }
+
+        .submission-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .submission-item .info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .submission-item .info .user {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .submission-item .info .email {
+            font-size: 13px;
+            color: #778;
+        }
+
+        .submission-item .info .ids {
+            font-size: 13px;
+            color: #556;
+        }
+
+        .submission-item .info .ids i {
+            color: #ffd700;
+            margin: 0 4px;
+        }
+
+        .submission-item .actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .submission-item .status-badge {
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.pending {
+            background: rgba(255, 215, 0, 0.1);
+            color: #ffd700;
+        }
+
+        .status-badge.approved {
+            background: rgba(50, 255, 50, 0.1);
+            color: #51cf66;
+        }
+
+        .status-badge.rejected {
+            background: rgba(255, 50, 50, 0.1);
+            color: #ff6b6b;
+        }
+
+        .btn-action {
+            padding: 6px 16px;
+            border-radius: 30px;
+            border: none;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-approve {
+            background: rgba(50, 255, 50, 0.1);
+            color: #51cf66;
+            border: 1px solid rgba(50, 255, 50, 0.15);
+        }
+
+        .btn-approve:hover {
+            background: rgba(50, 255, 50, 0.2);
+        }
+
+        .btn-reject {
+            background: rgba(255, 50, 50, 0.1);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 50, 50, 0.15);
+        }
+
+        .btn-reject:hover {
+            background: rgba(255, 50, 50, 0.2);
+        }
+
+        .btn-view {
+            background: rgba(255, 215, 0, 0.08);
+            color: #ffd700;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .btn-view:hover {
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        /* ===== ROLE DROPDOWN ===== */
+        .role-select {
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #ccd;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+        }
+
+        .role-select:focus {
+            border-color: #ffd700;
+        }
+
+        .role-select option {
+            background: #0b0e1a;
+            color: #fff;
+        }
+
+        /* ===== LOADING ===== */
+        .loading-spinner {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .loading-spinner .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 215, 0, 0.1);
+            border-top-color: #ffd700;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-spinner p {
+            color: #778;
+            font-size: 14px;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #556;
+            padding: 40px 0;
+        }
+
+        .no-data i {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 12px;
+            color: #445;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 640px) {
+            .container {
+                padding: 16px 16px 40px;
+            }
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .top-bar .admin-info {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .submission-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .submission-item .actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== BACKGROUND ===== -->
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+
+    <!-- ===== CONTAINER ===== -->
+    <div class="container">
+
+        <!-- ===== TOP BAR ===== -->
+        <div class="top-bar">
+            <div class="logo">MLBB <span>Admin</span></div>
+            <div class="admin-info">
+                <div class="avatar">A</div>
+                <span class="email" id="adminEmail">admin@mlbb.com</span>
+                <button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </div>
+
+        <!-- ===== STATS ===== -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card total">
+                <div class="number" id="totalUsers">0</div>
+                <div class="label"><i class="fas fa-users"></i> စုစုပေါင်း User</div>
+            </div>
+            <div class="stat-card pending">
+                <div class="number" id="pendingCount">0</div>
+                <div class="label"><i class="fas fa-clock"></i> စောင့်ဆိုင်းနေသည်</div>
+            </div>
+            <div class="stat-card approved">
+                <div class="number" id="approvedCount">0</div>
+                <div class="label"><i class="fas fa-check-circle"></i> အတည်ပြုပြီး</div>
+            </div>
+            <div class="stat-card rejected">
+                <div class="number" id="rejectedCount">0</div>
+                <div class="label"><i class="fas fa-times-circle"></i> ပယ်ချထား</div>
+            </div>
+        </div>
+
+        <!-- ===== TABS ===== -->
+        <div class="tabs">
+            <button class="tab-btn active" data-filter="all">အားလုံး</button>
+            <button class="tab-btn" data-filter="pending">⏳ စောင့်ဆိုင်းနေသည်</button>
+            <button class="tab-btn" data-filter="approved">✅ အတည်ပြုပြီး</button>
+            <button class="tab-btn" data-filter="rejected">❌ ပယ်ချထား</button>
+        </div>
+
+        <!-- ===== SUBMISSION LIST ===== -->
+        <div id="loadingState" class="loading-spinner">
+            <div class="spinner"></div>
+            <p>အချက်အလက်များ ယူနေသည်...</p>
+        </div>
+
+        <div id="submissionList" class="submission-list" style="display:none;">
+            <!-- Submissions will be rendered here -->
+        </div>
+
+    </div>
+
+    <!-- ===== FIREBASE SDK ===== -->
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
+                "firebase/auth": "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js",
+                "firebase/database": "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        // ===== IMPORTS =====
+        import { initializeApp } from "firebase/app";
+        import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+        import { getDatabase, ref, get, set, update, onValue } from "firebase/database";
+
+        // ===== FIREBASE CONFIG =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyDvJZva02_lv1ux8fo_uOqJ0mGEyD2h7eQ",
+            authDomain: "mlbb-f9540.firebaseapp.com",
+            projectId: "mlbb-f9540",
+            storageBucket: "mlbb-f9540.firebasestorage.app",
+            messagingSenderId: "935231587712",
+            appId: "1:935231587712:web:6f1a9895f5289254aeed65",
+            measurementId: "G-XC6G5NCQ5N"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        // ===== DOM REFS =====
+        const loadingState = document.getElementById('loadingState');
+        const submissionList = document.getElementById('submissionList');
+        const totalUsers = document.getElementById('totalUsers');
+        const pendingCount = document.getElementById('pendingCount');
+        const approvedCount = document.getElementById('approvedCount');
+        const rejectedCount = document.getElementById('rejectedCount');
+        const adminEmail = document.getElementById('adminEmail');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const tabBtns = document.querySelectorAll('.tab-btn');
+
+        // ===== STATE =====
+        let currentFilter = 'all';
+        let allSubmissions = [];
+        let allUsers = [];
+
+        // ===== ADMIN CHECK =====
+        const ADMIN_EMAIL = 'ko@gmail.com';
+
+        // ===== SHOW STATUS =====
+        function showLoading(show) {
+            loadingState.style.display = show ? 'block' : 'none';
+            submissionList.style.display = show ? 'none' : 'block';
+        }
+
+        // ===== UPDATE STATS =====
+        function updateStats(submissions) {
+            const pending = submissions.filter(s => s.status === 'pending').length;
+            const approved = submissions.filter(s => s.status === 'approved').length;
+            const rejected = submissions.filter(s => s.status === 'rejected').length;
+
+            pendingCount.textContent = pending;
+            approvedCount.textContent = approved;
+            rejectedCount.textContent = rejected;
+            totalUsers.textContent = allUsers.length || 0;
+        }
+
+        // ===== RENDER SUBMISSIONS =====
+        function renderSubmissions(submissions) {
+            if (submissions.length === 0) {
+                submissionList.innerHTML = `
+                    <div class="no-data">
+                        <i class="fas fa-inbox"></i>
+                        တင်ပြမှုမရှိသေးပါ
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            submissions.forEach((sub) => {
+                const statusClass = sub.status || 'pending';
+                const statusLabel = statusClass === 'pending' ? '⏳ စောင့်ဆိုင်းနေသည်' :
+                                   statusClass === 'approved' ? '✅ အတည်ပြုပြီး' :
+                                   statusClass === 'rejected' ? '❌ ပယ်ချထား' : 'အတည်မပြုရသေး';
+                const userName = sub.displayName || sub.userEmail?.split('@')[0] || 'User';
+                const date = sub.timestamp ? new Date(sub.timestamp).toLocaleString('my-MM') : '-';
+
+                html += `
+                    <div class="submission-item" data-id="${sub.id}" data-status="${sub.status || 'pending'}">
+                        <div class="info">
+                            <div class="user">${userName}</div>
+                            <div class="email">${sub.userEmail || '-'}</div>
+                            <div class="ids">
+                                <i class="fas fa-user"></i> ${sub.userId || '-'}
+                                <i class="fas fa-server"></i> ${sub.serverId || '-'}
+                                <span style="color:#556;font-size:12px;margin-left:8px;">${date}</span>
+                            </div>
+                        </div>
+                        <div class="actions">
+                            <span class="status-badge ${statusClass}">${statusLabel}</span>
+
+                            <!-- Role Dropdown -->
+                            <select class="role-select" data-uid="${sub.uid || ''}">
+                                <option value="user" ${sub.role === 'user' ? 'selected' : ''}>👤 User</option>
+                                <option value="winner" ${sub.role === 'winner' ? 'selected' : ''}>🏆 Winner</option>
+                                <option value="pending" ${sub.role === 'pending' ? 'selected' : ''}>⏳ Pending</option>
+                                <option value="rejected" ${sub.role === 'rejected' ? 'selected' : ''}>❌ Rejected</option>
+                            </select>
+
+                            <!-- View Screenshot -->
+                            ${sub.screenshot1 ? `<a href="${sub.screenshot1}" target="_blank" class="btn-action btn-view"><i class="fas fa-image"></i> ပုံ ၁</a>` : ''}
+                            ${sub.screenshot2 ? `<a href="${sub.screenshot2}" target="_blank" class="btn-action btn-view"><i class="fas fa-image"></i> ပုံ ၂</a>` : ''}
+
+                            <!-- Approve / Reject -->
+                            ${sub.status !== 'approved' ? `<button class="btn-action btn-approve" data-id="${sub.id}" data-action="approve"><i class="fas fa-check"></i> Approve</button>` : ''}
+                            ${sub.status !== 'rejected' ? `<button class="btn-action btn-reject" data-id="${sub.id}" data-action="reject"><i class="fas fa-times"></i> Reject</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            submissionList.innerHTML = html;
+
+            // ===== Event Listeners for Actions =====
+            // Approve / Reject
+            document.querySelectorAll('.btn-approve, .btn-reject').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const id = btn.dataset.id;
+                    const action = btn.dataset.action;
+                    const status = action === 'approve' ? 'approved' : 'rejected';
+
+                    if (!confirm(`ဒီ User ကို ${action === 'approve' ? 'အတည်ပြု' : 'ပယ်ချ'} လုပ်မှာလား?`)) return;
+
+                    try {
+                        await update(ref(db, `giveaway_submissions/${id}`), {
+                            status: status
+                        });
+
+                        // Also update user role if approved
+                        const sub = allSubmissions.find(s => s.id === id);
+                        if (sub && status === 'approved') {
+                            if (sub.uid) {
+                                await update(ref(db, `users/${sub.uid}`), {
+                                    role: 'winner'
+                                });
+                            }
+                        }
+
+                        showToast(`✅ ${action === 'approve' ? 'အတည်ပြုပြီး' : 'ပယ်ချထားပြီး'}!`, 'success');
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showToast('❌ တစ်ခုခုမှားနေသည်။', 'error');
+                    }
+                });
+            });
+
+            // Role Change
+            document.querySelectorAll('.role-select').forEach(select => {
+                select.addEventListener('change', async () => {
+                    const uid = select.dataset.uid;
+                    const newRole = select.value;
+
+                    if (!uid) return;
+                    if (!confirm(`Role ကို "${newRole}" သို့ ပြောင်းမှာလား?`)) {
+                        select.value = allSubmissions.find(s => s.uid === uid)?.role || 'user';
+                        return;
+                    }
+
+                    try {
+                        await update(ref(db, `users/${uid}`), {
+                            role: newRole
+                        });
+                        showToast(`✅ Role ကို "${newRole}" သို့ ပြောင်းပြီး!`, 'success');
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showToast('❌ Role ပြောင်းရာတွင် အမှားရှိနေသည်။', 'error');
+                    }
+                });
+            });
+        }
+
+        // ===== TOAST NOTIFICATION =====
+        function showToast(msg, type = 'success') {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed; bottom: 24px; right: 24px;
+                padding: 14px 24px; border-radius: 16px;
+                background: ${type === 'success' ? 'rgba(50,255,50,0.1)' : 'rgba(255,50,50,0.1)'};
+                border: 1px solid ${type === 'success' ? 'rgba(50,255,50,0.15)' : 'rgba(255,50,50,0.15)'};
+                color: ${type === 'success' ? '#51cf66' : '#ff6b6b'};
+                font-weight: 600; font-size: 14px;
+                z-index: 9999;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+                backdrop-filter: blur(10px);
+                max-width: 90%;
+            `;
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.5s';
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
+        // ===== FILTER SUBMISSIONS =====
+        function filterSubmissions(status) {
+            const filtered = status === 'all'
+                ? allSubmissions
+                : allSubmissions.filter(s => (s.status || 'pending') === status);
+            renderSubmissions(filtered);
+        }
+
+        // ===== LOAD DATA =====
+        async function loadData() {
+            try {
+                showLoading(true);
+
+                // ===== Get Users =====
+                const usersRef = ref(db, 'users');
+                const usersSnap = await get(usersRef);
+                allUsers = [];
+                if (usersSnap.exists()) {
+                    usersSnap.forEach((child) => {
+                        allUsers.push({
+                            uid: child.key,
+                            ...child.val()
+                        });
+                    });
+                }
+
+                // ===== Get Submissions =====
+                const submissionsRef = ref(db, 'giveaway_submissions');
+                const subSnap = await get(submissionsRef);
+                allSubmissions = [];
+                if (subSnap.exists()) {
+                    subSnap.forEach((child) => {
+                        const data = child.val();
+                        // Find user role
+                        const user = allUsers.find(u => u.uid === data.uid) || {};
+                        allSubmissions.push({
+                            id: child.key,
+                            ...data,
+                            role: user.role || 'user',
+                            displayName: user.displayName || data.userEmail?.split('@')[0] || 'User'
+                        });
+                    });
+                    // Sort by timestamp descending
+                    allSubmissions.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                }
+
+                updateStats(allSubmissions);
+                filterSubmissions(currentFilter);
+                showLoading(false);
+
+                // ===== REAL-TIME LISTENERS =====
+                // Listen for new submissions
+                onValue(submissionsRef, (snapshot) => {
+                    const newSubs = [];
+                    if (snapshot.exists()) {
+                        snapshot.forEach((child) => {
+                            const data = child.val();
+                            const user = allUsers.find(u => u.uid === data.uid) || {};
+                            newSubs.push({
+                                id: child.key,
+                                ...data,
+                                role: user.role || 'user',
+                                displayName: user.displayName || data.userEmail?.split('@')[0] || 'User'
+                            });
+                        });
+                        newSubs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                    }
+                    allSubmissions = newSubs;
+                    updateStats(allSubmissions);
+                    filterSubmissions(currentFilter);
+                });
+
+                // Listen for user role changes
+                onValue(usersRef, (snapshot) => {
+                    const newUsers = [];
+                    if (snapshot.exists()) {
+                        snapshot.forEach((child) => {
+                            newUsers.push({
+                                uid: child.key,
+                                ...child.val()
+                            });
+                        });
+                    }
+                    allUsers = newUsers;
+                    // Update submissions with new roles
+                    allSubmissions = allSubmissions.map(sub => {
+                        const user = allUsers.find(u => u.uid === sub.uid) || {};
+                        return {
+                            ...sub,
+                            role: user.role || 'user',
+                            displayName: user.displayName || sub.userEmail?.split('@')[0] || 'User'
+                        };
+                    });
+                    updateStats(allSubmissions);
+                    filterSubmissions(currentFilter);
+                });
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showLoading(false);
+                submissionList.innerHTML = `
+                    <div class="no-data" style="color:#ff6b6b;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        အချက်အလက်များ ယူရာတွင် အမှားရှိနေသည်။<br />
+                        <span style="font-size:13px;color:#556;">${error.message}</span>
+                    </div>
+                `;
+            }
+        }
+
+        // ===== TABS =====
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                filterSubmissions(currentFilter);
+            });
+        });
+
+        // ===== AUTH CHECK =====
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const email = user.email || '';
+            if (email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+                alert('သင်သည် Admin မဟုတ်ပါ။');
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            adminEmail.textContent = email;
+            loadData();
+        });
+
+        // ===== LOGOUT =====
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'login.html';
+            } catch (error) {
+                alert('Logout လုပ်ရာတွင် အမှားရှိနေသည်။');
+            }
+        });
+
+        console.log('✅ admin.html loaded');
+    </script>
+
+</body>
+</html>

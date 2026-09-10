@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MLBB - Profile</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        /* ===== RESET ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0b0e1a;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ===== BACKGROUND GLOW ===== */
+        .bg-glow {
+            position: fixed;
+            top: -30%;
+            left: -20%;
+            width: 70%;
+            height: 70%;
+            background: radial-gradient(ellipse, rgba(255, 215, 0, 0.05), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow-2 {
+            position: fixed;
+            bottom: -30%;
+            right: -20%;
+            width: 70%;
+            height: 70%;
+            background: radial-gradient(ellipse, rgba(255, 70, 70, 0.03), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 20px 24px 60px;
+        }
+
+        /* ===== BACK BUTTON ===== */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: #99a;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.3s;
+            padding: 10px 0 20px;
+        }
+
+        .back-btn:hover {
+            color: #ffd700;
+        }
+
+        /* ===== HEADER ===== */
+        .page-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(26px, 4vw, 38px);
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .page-header h1 .highlight {
+            color: #ffd700;
+        }
+
+        .page-header p {
+            color: #99a;
+            font-size: 15px;
+        }
+
+        /* ===== PROFILE CARD ===== */
+        .profile-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 24px;
+            padding: 32px 28px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffd700, #f5a623);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 36px;
+            color: #0b0e1a;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .profile-card .name {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .profile-card .email {
+            color: #99a;
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+
+        .profile-card .badge-status {
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .badge-status.pending {
+            background: rgba(255, 215, 0, 0.1);
+            color: #ffd700;
+        }
+
+        .badge-status.approved {
+            background: rgba(50, 255, 50, 0.1);
+            color: #51cf66;
+        }
+
+        .badge-status.rejected {
+            background: rgba(255, 50, 50, 0.1);
+            color: #ff6b6b;
+        }
+
+        .badge-status.none {
+            background: rgba(255, 255, 255, 0.05);
+            color: #556;
+        }
+
+        /* ===== INFO GRID ===== */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0 10px;
+        }
+
+        .info-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 14px 16px;
+            text-align: left;
+        }
+
+        .info-item .label {
+            font-size: 11px;
+            color: #556;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .info-item .value {
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 2px;
+            color: #fff;
+        }
+
+        .info-item .value i {
+            color: #ffd700;
+            margin-right: 6px;
+        }
+
+        /* ===== SUBMISSION HISTORY ===== */
+        .history-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 20px 24px;
+            margin-bottom: 20px;
+        }
+
+        .history-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .history-card h3 i {
+            color: #ffd700;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-item .left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .history-item .left .date {
+            font-size: 13px;
+            color: #778;
+        }
+
+        .history-item .left .id-info {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .history-item .status-badge {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 30px;
+        }
+
+        .history-item .status-badge.pending {
+            background: rgba(255, 215, 0, 0.1);
+            color: #ffd700;
+        }
+
+        .history-item .status-badge.approved {
+            background: rgba(50, 255, 50, 0.1);
+            color: #51cf66;
+        }
+
+        .history-item .status-badge.rejected {
+            background: rgba(255, 50, 50, 0.1);
+            color: #ff6b6b;
+        }
+
+        .no-history {
+            color: #556;
+            font-size: 14px;
+            text-align: center;
+            padding: 16px 0;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-width: 120px;
+        }
+
+        .btn-logout {
+            background: rgba(255, 50, 50, 0.1);
+            border: 1px solid rgba(255, 50, 50, 0.15);
+            color: #ff6b6b;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 50, 50, 0.2);
+        }
+
+        .btn-giveaway {
+            background: linear-gradient(135deg, #ffd700, #f5a623);
+            color: #0b0e1a;
+            box-shadow: 0 8px 24px rgba(255, 215, 0, 0.15);
+        }
+
+        .btn-giveaway:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(255, 215, 0, 0.3);
+        }
+
+        /* ===== LOADING ===== */
+        .loading-spinner {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .loading-spinner .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 215, 0, 0.1);
+            border-top-color: #ffd700;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-spinner p {
+            color: #778;
+            font-size: 14px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer-note {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            text-align: center;
+            color: #556;
+            font-size: 12px;
+        }
+
+        .footer-note span {
+            color: #ffd700;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px 16px 40px;
+            }
+            .profile-card {
+                padding: 24px 18px;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+            .btn-group .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== BACKGROUND ===== -->
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+
+    <!-- ===== CONTAINER ===== -->
+    <div class="container">
+
+        <!-- ===== BACK BUTTON ===== -->
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> နောက်သို့
+        </a>
+
+        <!-- ===== HEADER ===== -->
+        <div class="page-header">
+            <h1>
+                <span class="highlight">Profile</span>
+            </h1>
+            <p>သင့်အကောင့်အချက်အလက်နှင့် Submission အခြေအနေ</p>
+        </div>
+
+        <!-- ===== LOADING ===== -->
+        <div id="loadingState" class="loading-spinner">
+            <div class="spinner"></div>
+            <p>အချက်အလက်များ ယူနေသည်...</p>
+        </div>
+
+        <!-- ===== PROFILE CONTENT ===== -->
+        <div id="profileContent" style="display:none;">
+
+            <!-- ===== PROFILE CARD ===== -->
+            <div class="profile-card">
+                <div class="profile-avatar" id="avatarLetter">U</div>
+                <div class="name" id="userName">User</div>
+                <div class="email" id="userEmail">user@email.com</div>
+                <div>
+                    <span class="badge-status" id="statusBadge">အတည်မပြုရသေး</span>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="label"><i class="fas fa-user"></i> User ID</div>
+                        <div class="value" id="profileUserId">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label"><i class="fas fa-server"></i> Server ID</div>
+                        <div class="value" id="profileServerId">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== SUBMISSION HISTORY ===== -->
+            <div class="history-card">
+                <h3><i class="fas fa-clock-rotate-left"></i> တင်ပြမှုမှတ်တမ်း</h3>
+                <div id="historyList">
+                    <div class="no-history">
+                        <i class="fas fa-inbox" style="color:#556;font-size:24px;display:block;margin-bottom:8px;"></i>
+                        တင်ပြမှုမရှိသေးပါ
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== BUTTONS ===== -->
+            <div class="btn-group">
+                <a href="giveaway.html" class="btn btn-giveaway">
+                    <i class="fas fa-paper-plane"></i> Screenshot တင်ရန်
+                </a>
+                <button class="btn btn-logout" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+
+        </div>
+
+        <!-- ===== FOOTER ===== -->
+        <div class="footer-note">
+            <i class="fas fa-crown" style="color:#ffd700;"></i>
+            MLBB ၁၀ နှစ်ပြည့် Giveaway &bull; <span>စိန် ၁၀,၀၀၀</span>
+        </div>
+
+    </div>
+
+    <!-- ===== FIREBASE ===== -->
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
+                "firebase/auth": "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js",
+                "firebase/database": "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        // ===== IMPORTS =====
+        import { initializeApp } from "firebase/app";
+        import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+        import { getDatabase, ref, query, orderByChild, equalTo, get } from "firebase/database";
+
+        // ===== FIREBASE CONFIG =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyDvJZva02_lv1ux8fo_uOqJ0mGEyD2h7eQ",
+            authDomain: "mlbb-f9540.firebaseapp.com",
+            projectId: "mlbb-f9540",
+            storageBucket: "mlbb-f9540.firebasestorage.app",
+            messagingSenderId: "935231587712",
+            appId: "1:935231587712:web:6f1a9895f5289254aeed65",
+            measurementId: "G-XC6G5NCQ5N"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        // ===== DOM REFS =====
+        const loadingState = document.getElementById('loadingState');
+        const profileContent = document.getElementById('profileContent');
+        const avatarLetter = document.getElementById('avatarLetter');
+        const userName = document.getElementById('userName');
+        const userEmail = document.getElementById('userEmail');
+        const statusBadge = document.getElementById('statusBadge');
+        const profileUserId = document.getElementById('profileUserId');
+        const profileServerId = document.getElementById('profileServerId');
+        const historyList = document.getElementById('historyList');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // ===== GET USER SUBMISSIONS =====
+        async function getUserSubmissions(email) {
+            const submissionsRef = ref(db, 'giveaway_submissions');
+            const q = query(submissionsRef, orderByChild('userEmail'), equalTo(email));
+            const snapshot = await get(q);
+
+            const submissions = [];
+            if (snapshot.exists()) {
+                snapshot.forEach((child) => {
+                    submissions.push({
+                        id: child.key,
+                        ...child.val()
+                    });
+                });
+                // Sort by timestamp descending (newest first)
+                submissions.sort((a, b) => b.timestamp - a.timestamp);
+            }
+            return submissions;
+        }
+
+        // ===== RENDER HISTORY =====
+        function renderHistory(submissions) {
+            if (submissions.length === 0) {
+                historyList.innerHTML = `
+                    <div class="no-history">
+                        <i class="fas fa-inbox" style="color:#556;font-size:24px;display:block;margin-bottom:8px;"></i>
+                        တင်ပြမှုမရှိသေးပါ
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            submissions.forEach((sub) => {
+                const statusClass = sub.status || 'pending';
+                const statusLabel = statusClass === 'pending' ? 'စောင့်ဆိုင်းနေသည်' :
+                                   statusClass === 'approved' ? 'အတည်ပြုပြီး' :
+                                   statusClass === 'rejected' ? 'ပယ်ချထား' : 'အတည်မပြုရသေး';
+                const date = new Date(sub.timestamp).toLocaleString('my-MM');
+
+                html += `
+                    <div class="history-item">
+                        <div class="left">
+                            <div class="id-info">
+                                <i class="fas fa-user" style="color:#ffd700;"></i> ${sub.userId || '-'} 
+                                <i class="fas fa-server" style="color:#ffd700;margin-left:12px;"></i> ${sub.serverId || '-'}
+                            </div>
+                            <div class="date">${date}</div>
+                        </div>
+                        <span class="status-badge ${statusClass}">${statusLabel}</span>
+                    </div>
+                `;
+            });
+
+            historyList.innerHTML = html;
+        }
+
+        // ===== LOAD PROFILE =====
+        async function loadProfile(user) {
+            try {
+                const email = user.email;
+                const displayName = user.displayName || email.split('@')[0];
+
+                // Set profile info
+                avatarLetter.textContent = displayName.charAt(0).toUpperCase();
+                userName.textContent = displayName;
+                userEmail.textContent = email;
+
+                // Get submissions
+                const submissions = await getUserSubmissions(email);
+
+                // Get latest submission status
+                if (submissions.length > 0) {
+                    const latest = submissions[0];
+                    const status = latest.status || 'pending';
+
+                    if (status === 'pending') {
+                        statusBadge.textContent = '⏳ စောင့်ဆိုင်းနေသည်';
+                        statusBadge.className = 'badge-status pending';
+                    } else if (status === 'approved') {
+                        statusBadge.textContent = '✅ အတည်ပြုပြီး';
+                        statusBadge.className = 'badge-status approved';
+                    } else if (status === 'rejected') {
+                        statusBadge.textContent = '❌ ပယ်ချထား';
+                        statusBadge.className = 'badge-status rejected';
+                    }
+
+                    // Show latest User ID / Server ID
+                    profileUserId.textContent = latest.userId || '-';
+                    profileServerId.textContent = latest.serverId || '-';
+                } else {
+                    statusBadge.textContent = '📝 တင်ပြမှုမရှိသေး';
+                    statusBadge.className = 'badge-status none';
+                    profileUserId.textContent = '-';
+                    profileServerId.textContent = '-';
+                }
+
+                // Render history
+                renderHistory(submissions);
+
+                // Show content
+                loadingState.style.display = 'none';
+                profileContent.style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                loadingState.innerHTML = `
+                    <div style="color:#ff6b6b;font-size:16px;">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        အချက်အလက်များ ယူရာတွင် အမှားရှိနေသည်
+                    </div>
+                    <p style="color:#556;font-size:13px;margin-top:8px;">${error.message}</p>
+                `;
+            }
+        }
+
+        // ===== AUTH STATE =====
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                loadProfile(user);
+            } else {
+                // Not logged in → redirect to login
+                window.location.href = 'login.html';
+            }
+        });
+
+        // ===== LOGOUT =====
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'login.html';
+            } catch (error) {
+                alert('Logout လုပ်ရာတွင် အမှားရှိနေသည်: ' + error.message);
+            }
+        });
+
+        console.log('✅ profile.html loaded');
+    </script>
+
+</body>
+</html>

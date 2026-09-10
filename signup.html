@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MLBB ၁၀ နှစ် - မှတ်ပုံတင်မည်</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        /* ===== အတူတူပဲ (အပေါ်က signup.html က style ကို ကူးယူသုံးပါ) ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0b0e1a;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -30%;
+            left: -20%;
+            width: 70%;
+            height: 70%;
+            background: radial-gradient(ellipse, rgba(255, 215, 0, 0.06), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -30%;
+            right: -20%;
+            width: 70%;
+            height: 70%;
+            background: radial-gradient(ellipse, rgba(255, 70, 70, 0.04), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .card {
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 40px;
+            padding: 48px 40px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            transition: 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 215, 0, 0.05);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo .icon {
+            font-size: 48px;
+            color: #ffd700;
+            background: rgba(255, 215, 0, 0.08);
+            padding: 16px;
+            border-radius: 24px;
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        .logo h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .logo h1 span {
+            color: #ffd700;
+        }
+
+        .logo p {
+            color: #99a;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #ccd;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .input-group label i {
+            color: #ffd700;
+            margin-right: 6px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .input-group input:focus {
+            border-color: #ffd700;
+            background: rgba(255, 255, 255, 0.07);
+            box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.05);
+        }
+
+        .input-group input::placeholder {
+            color: #556;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #ffd700, #f5a623);
+            color: #0b0e1a;
+            font-size: 18px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 8px 24px rgba(255, 215, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(11, 14, 26, 0.15);
+            border-top-color: #0b0e1a;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        .btn.loading .spinner {
+            display: block;
+        }
+        .btn.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .status-msg {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-msg.error {
+            display: block;
+            background: rgba(255, 50, 50, 0.08);
+            border: 1px solid rgba(255, 50, 50, 0.1);
+            color: #ff6b6b;
+        }
+
+        .status-msg.success {
+            display: block;
+            background: rgba(50, 255, 50, 0.08);
+            border: 1px solid rgba(50, 255, 50, 0.1);
+            color: #51cf66;
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 24px;
+            color: #556;
+            font-size: 14px;
+        }
+
+        .footer-links a {
+            color: #ffd700;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-links .divider {
+            color: #445;
+            margin: 0 8px;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 32px 20px;
+                border-radius: 28px;
+            }
+            .logo h1 {
+                font-size: 20px;
+            }
+            .btn {
+                font-size: 16px;
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+
+        <!-- ===== LOGO ===== -->
+        <div class="logo">
+            <div class="icon"><i class="fas fa-user-plus"></i></div>
+            <h1>MLBB <span>၁၀ နှစ်</span></h1>
+            <p>အကောင့်အသစ် ဖွင့်မည်</p>
+        </div>
+
+        <!-- ===== FORM ===== -->
+        <form id="signupForm">
+            <div class="input-group">
+                <label><i class="fas fa-user"></i> အမည်</label>
+                <input type="text" id="nameInput" placeholder="သင့်နာမည်" />
+            </div>
+
+            <div class="input-group">
+                <label><i class="fas fa-envelope"></i> အီးမေးလ်</label>
+                <input type="email" id="emailInput" placeholder="သင့် email ထည့်ပါ" required />
+            </div>
+
+            <div class="input-group">
+                <label><i class="fas fa-lock"></i> စကားဝှက်</label>
+                <input type="password" id="passwordInput" placeholder="အနည်းဆုံး ၆ လုံး" required />
+            </div>
+
+            <button type="submit" class="btn" id="signupBtn">
+                <span class="btn-text"><i class="fas fa-user-plus"></i> မှတ်ပုံတင်မည်</span>
+                <span class="spinner"></span>
+            </button>
+
+            <div id="statusMsg" class="status-msg"></div>
+        </form>
+
+        <!-- ===== FOOTER ===== -->
+        <div class="footer-links">
+            အကောင့်ရှိပြီးသား ? <a href="login.html">ဝင်မည်</a>
+        </div>
+
+    </div>
+
+    <!-- ===== FIREBASE SDK ===== -->
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
+                "firebase/auth": "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js",
+                "firebase/database": "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        // ===== IMPORTS =====
+        import { initializeApp } from "firebase/app";
+        import { getAuth, createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from "firebase/auth";
+        import { getDatabase, ref, set } from "firebase/database";
+
+        // ===== FIREBASE CONFIG =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyDvJZva02_lv1ux8fo_uOqJ0mGEyD2h7eQ",
+            authDomain: "mlbb-f9540.firebaseapp.com",
+            projectId: "mlbb-f9540",
+            storageBucket: "mlbb-f9540.firebasestorage.app",
+            messagingSenderId: "935231587712",
+            appId: "1:935231587712:web:6f1a9895f5289254aeed65",
+            measurementId: "G-XC6G5NCQ5N"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        // ===== DOM REFS =====
+        const form = document.getElementById('signupForm');
+        const nameInput = document.getElementById('nameInput');
+        const emailInput = document.getElementById('emailInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const signupBtn = document.getElementById('signupBtn');
+        const statusMsg = document.getElementById('statusMsg');
+
+        // ===== SHOW STATUS =====
+        function showStatus(msg, type = 'error') {
+            statusMsg.textContent = msg;
+            statusMsg.className = `status-msg ${type}`;
+            if (msg) {
+                statusMsg.style.display = 'block';
+            } else {
+                statusMsg.style.display = 'none';
+            }
+        }
+
+        // ===== FORM SUBMIT =====
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showStatus('', '');
+
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (!email || !password) {
+                showStatus('ကျေးဇူးပြု၍ အီးမေးလ်နှင့် စကားဝှက် ဖြည့်ပါ။', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showStatus('စကားဝှက်သည် အနည်းဆုံး ၆ လုံး ရှိရမယ်။', 'error');
+                return;
+            }
+
+            signupBtn.classList.add('loading');
+            signupBtn.disabled = true;
+
+            try {
+                const userCred = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCred.user;
+
+                // Update display name
+                if (name) {
+                    await updateProfile(user, { displayName: name });
+                }
+
+                // ===== 🔥 SAVE USER ROLE TO DATABASE =====
+                await set(ref(db, `users/${user.uid}`), {
+                    email: email,
+                    displayName: name || email.split('@')[0],
+                    role: 'user',        // 🔑 ပုံမှန် User အဖြစ်သိမ်းမယ်
+                    createdAt: Date.now()
+                });
+
+                // Send verification email
+                await sendEmailVerification(user);
+
+                showStatus('✅ အကောင့် အောင်မြင်စွာ ဖန်တီးပြီး! ကျေးဇူးပြု၍ သင့် email ကို အတည်ပြုရန် လင့်ခ်ကို နှိပ်ပါ။', 'success');
+
+                signupBtn.classList.remove('loading');
+                signupBtn.disabled = false;
+
+                // Redirect to login after 3 sec
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 3000);
+
+            } catch (error) {
+                let msg = error.message;
+                if (error.code === 'auth/email-already-in-use') msg = 'ဤ email ကို အသုံးပြုထားပြီးသား။';
+                else if (error.code === 'auth/weak-password') msg = 'စကားဝှက် အားနည်းလွန်းသည်။ (၆ လုံးအထက်)';
+                else if (error.code === 'auth/invalid-email') msg = 'အီးမေးလ် ပုံစံမမှန်ပါ။';
+                showStatus('❌ ' + msg, 'error');
+                signupBtn.classList.remove('loading');
+                signupBtn.disabled = false;
+            }
+        });
+
+        console.log('✅ signup.html loaded (with role: user)');
+    </script>
+
+</body>
+</html>

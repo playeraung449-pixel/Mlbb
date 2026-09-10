@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MLBB ၁၀ နှစ် - ဝင်မည်</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        /* ===== အတူတူပဲ (အပေါ်က login.html က style ကို ကူးယူသုံးပါ) ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0b0e1a;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -30%;
+            left: -20%;
+            width: 70%;
+            height: 70%;
+            background: radial-gradient(ellipse, rgba(255, 215, 0, 0.06), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -30%;
+            right: -20%;
+            width: 70%;
+            height: 70%;
+            background: radial-gradient(ellipse, rgba(255, 70, 70, 0.04), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .login-card {
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 40px;
+            padding: 48px 40px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            transition: 0.3s ease;
+        }
+
+        .login-card:hover {
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 215, 0, 0.05);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo .icon {
+            font-size: 48px;
+            color: #ffd700;
+            background: rgba(255, 215, 0, 0.08);
+            padding: 16px;
+            border-radius: 24px;
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        .logo h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .logo h1 span {
+            color: #ffd700;
+        }
+
+        .logo p {
+            color: #99a;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #ccd;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .input-group label i {
+            color: #ffd700;
+            margin-right: 6px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .input-group input:focus {
+            border-color: #ffd700;
+            background: rgba(255, 255, 255, 0.07);
+            box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.05);
+        }
+
+        .input-group input::placeholder {
+            color: #556;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #ffd700, #f5a623);
+            color: #0b0e1a;
+            font-size: 18px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 8px 24px rgba(255, 215, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-login .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(11, 14, 26, 0.15);
+            border-top-color: #0b0e1a;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        .btn-login.loading .spinner {
+            display: block;
+        }
+        .btn-login.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .status-msg {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-msg.error {
+            display: block;
+            background: rgba(255, 50, 50, 0.08);
+            border: 1px solid rgba(255, 50, 50, 0.1);
+            color: #ff6b6b;
+        }
+
+        .status-msg.success {
+            display: block;
+            background: rgba(50, 255, 50, 0.08);
+            border: 1px solid rgba(50, 255, 50, 0.1);
+            color: #51cf66;
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 24px;
+            color: #556;
+            font-size: 14px;
+        }
+
+        .footer-links a {
+            color: #ffd700;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-links .divider {
+            color: #445;
+            margin: 0 8px;
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 32px 20px;
+                border-radius: 28px;
+            }
+            .logo h1 {
+                font-size: 20px;
+            }
+            .btn-login {
+                font-size: 16px;
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+
+        <!-- ===== LOGO ===== -->
+        <div class="logo">
+            <div class="icon"><i class="fas fa-crown"></i></div>
+            <h1>MLBB <span>၁၀ နှစ်</span></h1>
+            <p>စိန် ၁၀,၀၀၀ Giveaway</p>
+        </div>
+
+        <!-- ===== FORM ===== -->
+        <form id="loginForm">
+            <div class="input-group">
+                <label><i class="fas fa-envelope"></i> အီးမေးလ်</label>
+                <input type="email" id="emailInput" placeholder="သင့် email ထည့်ပါ" required />
+            </div>
+
+            <div class="input-group">
+                <label><i class="fas fa-lock"></i> စကားဝှက်</label>
+                <input type="password" id="passwordInput" placeholder="စကားဝှက်" required />
+            </div>
+
+            <button type="submit" class="btn-login" id="loginBtn">
+                <span class="btn-text"><i class="fas fa-sign-in-alt"></i> ဝင်မည်</span>
+                <span class="spinner"></span>
+            </button>
+
+            <div id="statusMsg" class="status-msg"></div>
+        </form>
+
+        <!-- ===== FOOTER ===== -->
+        <div class="footer-links">
+            အကောင့်မရှိသေးဘူး ? <a href="signup.html">မှတ်ပုံတင်မည်</a>
+        </div>
+
+    </div>
+
+    <!-- ===== FIREBASE SDK ===== -->
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
+                "firebase/auth": "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js",
+                "firebase/database": "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        // ===== IMPORTS =====
+        import { initializeApp } from "firebase/app";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+        import { getDatabase, ref, get } from "firebase/database";
+
+        // ===== FIREBASE CONFIG =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyDvJZva02_lv1ux8fo_uOqJ0mGEyD2h7eQ",
+            authDomain: "mlbb-f9540.firebaseapp.com",
+            projectId: "mlbb-f9540",
+            storageBucket: "mlbb-f9540.firebasestorage.app",
+            messagingSenderId: "935231587712",
+            appId: "1:935231587712:web:6f1a9895f5289254aeed65",
+            measurementId: "G-XC6G5NCQ5N"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        // ===== DOM REFS =====
+        const form = document.getElementById('loginForm');
+        const emailInput = document.getElementById('emailInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const loginBtn = document.getElementById('loginBtn');
+        const statusMsg = document.getElementById('statusMsg');
+
+        // ===== ADMIN EMAIL =====
+        const ADMIN_EMAIL = 'ko@gmail.com';
+
+        // ===== SHOW STATUS =====
+        function showStatus(msg, type = 'error') {
+            statusMsg.textContent = msg;
+            statusMsg.className = `status-msg ${type}`;
+            if (msg) {
+                statusMsg.style.display = 'block';
+            } else {
+                statusMsg.style.display = 'none';
+            }
+        }
+
+        // ===== GET USER ROLE FROM DATABASE =====
+        async function getUserRole(uid) {
+            try {
+                const userRef = ref(db, `users/${uid}`);
+                const snapshot = await get(userRef);
+                if (snapshot.exists()) {
+                    return snapshot.val().role || 'user';
+                }
+                return 'user';
+            } catch (error) {
+                console.error('Error getting user role:', error);
+                return 'user';
+            }
+        }
+
+        // ===== REDIRECT BASED ON ROLE =====
+        function redirectBasedOnRole(role, email) {
+            // Admin စစ်ဆေး
+            if (email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+                window.location.href = 'admin.html';
+                return;
+            }
+
+            // Role ပေါ်မူတည်ပြီး လမ်းကြောင်းခွဲ
+            switch (role) {
+                case 'winner':
+                    window.location.href = 'reward.html';  // ဆုရရှိသူများနေရာ
+                    break;
+                case 'pending':
+                    window.location.href = 'pending.html'; // စောင့်ဆိုင်းနေသူများနေရာ
+                    break;
+                case 'rejected':
+                    window.location.href = 'rejected.html'; // ပယ်ချခံရသူများနေရာ
+                    break;
+                default:
+                    window.location.href = 'dashboard.html'; // သာမန် User
+            }
+        }
+
+        // ===== FORM SUBMIT =====
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showStatus('', '');
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (!email || !password) {
+                showStatus('ကျေးဇူးပြု၍ အီးမေးလ်နှင့် စကားဝှက် ဖြည့်ပါ။', 'error');
+                return;
+            }
+
+            loginBtn.classList.add('loading');
+            loginBtn.disabled = true;
+
+            try {
+                const userCred = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCred.user;
+
+                if (!user.emailVerified) {
+                    showStatus('ကျေးဇူးပြု၍ သင့် email ကို အတည်ပြုလုပ်ပါ။', 'error');
+                    loginBtn.classList.remove('loading');
+                    loginBtn.disabled = false;
+                    return;
+                }
+
+                // ===== Get User Role =====
+                const role = await getUserRole(user.uid);
+
+                // ===== Redirect =====
+                showStatus(`✅ ကြိုဆိုပါတယ် ${user.displayName || user.email} !`, 'success');
+                setTimeout(() => {
+                    redirectBasedOnRole(role, email);
+                }, 1200);
+
+            } catch (error) {
+                let msg = error.message;
+                if (error.code === 'auth/user-not-found') msg = 'ဤ email နဲ့ အကောင့် မရှိပါ။';
+                else if (error.code === 'auth/wrong-password') msg = 'စကားဝှက် မှားနေသည်။';
+                else if (error.code === 'auth/too-many-requests') msg = 'အကြိမ်ကြိမ် ကြိုးစားထားလို့ ခေတ္တပိတ်ထားသည်။';
+                showStatus('❌ ' + msg, 'error');
+            }
+
+            loginBtn.classList.remove('loading');
+            loginBtn.disabled = false;
+        });
+
+        // ===== AUTO REDIRECT IF ALREADY LOGGED IN =====
+        onAuthStateChanged(auth, async (user) => {
+            if (user && user.emailVerified) {
+                const email = user.email || '';
+                const role = await getUserRole(user.uid);
+                redirectBasedOnRole(role, email);
+            }
+        });
+
+        console.log('✅ login.html loaded (Role-Based Redirect)');
+    </script>
+
+</body>
+</html>
