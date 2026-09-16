@@ -213,17 +213,11 @@
             border: 1px solid rgba(50, 255, 50, 0.1);
         }
 
-        .welcome-user .auth-badge.guest {
-            background: rgba(255, 215, 0, 0.06);
-            color: #ffd700;
-            border: 1px solid rgba(255, 215, 0, 0.1);
-        }
-
         .welcome-user .auth-badge i {
             margin-right: 4px;
         }
 
-        /* ===== AUTH BUTTONS (အကောင့်မဝင်ရသေးရင်) ===== */
+        /* ===== AUTH BUTTONS ===== */
         .auth-buttons {
             display: flex;
             align-items: center;
@@ -650,6 +644,30 @@
             color: #ffd700;
         }
 
+        /* ===== LOGOUT BUTTON ===== */
+        .sidebar-menu li.logout-item {
+            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 16px;
+        }
+
+        .sidebar-menu li.logout-item a {
+            color: #ff6b6b;
+        }
+
+        .sidebar-menu li.logout-item a i {
+            color: #ff6b6b;
+        }
+
+        .sidebar-menu li.logout-item a:hover {
+            background: rgba(255, 50, 50, 0.08);
+            color: #ff6b6b;
+        }
+
+        .sidebar-menu li.logout-item a:hover i {
+            color: #ff6b6b;
+        }
+
         .sidebar-footer {
             position: absolute;
             bottom: 30px;
@@ -795,6 +813,14 @@
             <li><a href="success.html"><i class="fas fa-trophy"></i> ဆုရရှိသူများ</a></li>
             <li><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
             <li><a href="help.html"><i class="fas fa-question-circle"></i> အကူအညီ</a></li>
+
+            <!-- ===== LOGOUT ===== -->
+            <li class="logout-item" id="logoutItem" style="display:none;">
+                <a href="#" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> 
+                    Logout
+                </a>
+            </li>
         </ul>
         <div class="sidebar-footer">
             <i class="fas fa-crown" style="color:#ffd700;"></i> MLBB ၁၀ နှစ် <span>Giveaway</span>
@@ -923,7 +949,7 @@
     <script type="module">
         // ===== IMPORTS =====
         import { initializeApp } from "firebase/app";
-        import { getAuth, onAuthStateChanged } from "firebase/auth";
+        import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
         import { getDatabase, ref, get } from "firebase/database";
 
         // ===== FIREBASE CONFIG =====
@@ -945,6 +971,8 @@
         const loggedInView = document.getElementById('loggedInView');
         const guestView = document.getElementById('guestView');
         const userNameDisplay = document.getElementById('userNameDisplay');
+        const logoutItem = document.getElementById('logoutItem');
+        const logoutBtn = document.getElementById('logoutBtn');
 
         // ===== GET USER ROLE =====
         async function getUserRole(uid) {
@@ -972,26 +1000,8 @@
                 loggedInView.style.display = 'flex';
                 guestView.style.display = 'none';
 
-                // ===== OPTIONAL: Role-based redirect =====
-                // ဒီနေရာမှာ Role ကိုစစ်ပြီး သက်ဆိုင်ရာစာမျက်နှာကို ပို့နိုင်တယ်
-                // ဒါပေမယ့် index.html က အားလုံးအတွက် ဖြစ်တဲ့အတွက် ဒီမှာ မလုပ်တော့ဘူး
-                
-                /*
-                const role = await getUserRole(user.uid);
-                const email = user.email || '';
-                
-                if (email.toLowerCase() === 'ko@gmail.com') {
-                    window.location.href = 'admin.html';
-                } else if (role === 'winner') {
-                    window.location.href = 'reward.html';
-                } else if (role === 'pending') {
-                    window.location.href = 'pending.html';
-                } else if (role === 'rejected') {
-                    window.location.href = 'rejected.html';
-                } else {
-                    window.location.href = 'dashboard.html';
-                }
-                */
+                // Show Logout button
+                logoutItem.style.display = 'block';
 
                 console.log('✅ User logged in:', name);
 
@@ -999,9 +1009,38 @@
                 // ❌ အကောင့်မဝင်ရသေး
                 loggedInView.style.display = 'none';
                 guestView.style.display = 'flex';
+
+                // Hide Logout button
+                logoutItem.style.display = 'none';
+
                 console.log('👤 Guest user');
             }
         });
+
+        // ===== LOGOUT =====
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+
+                if (!confirm('Logout လုပ်မှာလား?')) return;
+
+                try {
+                    await signOut(auth);
+
+                    // Sidebar ကိုပိတ်မယ်
+                    document.getElementById('sidebar').classList.remove('open');
+                    document.getElementById('sidebarOverlay').classList.remove('show');
+                    document.body.style.overflow = '';
+
+                    // Login ကိုပို့မယ်
+                    window.location.href = 'login.html';
+
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    alert('Logout လုပ်ရာတွင် အမှားရှိနေသည်။');
+                }
+            });
+        }
 
         // ===== PARTICLES =====
         function createParticles() {
@@ -1046,7 +1085,7 @@
             if (e.key === 'Escape') closeSidebar();
         });
 
-        console.log('✅ index.html loaded with Auth Check');
+        console.log('✅ index.html loaded with Auth Check + Logout');
     </script>
 
 </body>
