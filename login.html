@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
     <style>
-        /* ===== အတူတူပဲ (အပေါ်က login.html က style ကို ကူးယူသုံးပါ) ===== */
         * {
             margin: 0;
             padding: 0;
@@ -340,7 +339,7 @@
         const statusMsg = document.getElementById('statusMsg');
 
         // ===== ADMIN EMAIL =====
-        const ADMIN_EMAIL = 'ko@gmail.com';
+        const ADMIN_EMAIL = 'playeraung449@gmail.com';
 
         // ===== SHOW STATUS =====
         function showStatus(msg, type = 'error') {
@@ -379,16 +378,16 @@
             // Role ပေါ်မူတည်ပြီး လမ်းကြောင်းခွဲ
             switch (role) {
                 case 'winner':
-                    window.location.href = 'reward.html';  // ဆုရရှိသူများနေရာ
+                    window.location.href = 'reward.html';
                     break;
                 case 'pending':
-                    window.location.href = 'pending.html'; // စောင့်ဆိုင်းနေသူများနေရာ
+                    window.location.href = 'pending.html';
                     break;
                 case 'rejected':
-                    window.location.href = 'rejected.html'; // ပယ်ချခံရသူများနေရာ
+                    window.location.href = 'rejected.html';
                     break;
                 default:
-                    window.location.href = 'dashboard.html'; // သာမန် User
+                    window.location.href = 'dashboard.html';
             }
         }
 
@@ -419,10 +418,8 @@
                     return;
                 }
 
-                // ===== Get User Role =====
                 const role = await getUserRole(user.uid);
 
-                // ===== Redirect =====
                 showStatus(`✅ ကြိုဆိုပါတယ် ${user.displayName || user.email} !`, 'success');
                 setTimeout(() => {
                     redirectBasedOnRole(role, email);
@@ -449,7 +446,7 @@
             }
         });
 
-        console.log('✅ login.html loaded (Role-Based Redirect)');
+        console.log('✅ login.html loaded (Admin: playeraung449@gmail.com)');
     </script>
 
 </body>
