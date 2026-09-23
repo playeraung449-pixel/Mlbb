@@ -299,54 +299,6 @@
             display: none;
         }
 
-        /* ===== VERIFY BUTTON ===== */
-        .btn-verify {
-            width: 100%;
-            padding: 14px;
-            border-radius: 30px;
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            color: #ffd700;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s ease;
-            font-family: 'Inter', sans-serif;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .btn-verify:hover {
-            background: rgba(255, 215, 0, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .btn-verify:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-verify .spinner {
-            display: none;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 215, 0, 0.15);
-            border-top-color: #ffd700;
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-        }
-
-        .btn-verify.loading .spinner {
-            display: block;
-        }
-        .btn-verify.loading .btn-text {
-            display: none;
-        }
-
         .footer-links {
             text-align: center;
             margin-top: 24px;
@@ -411,12 +363,6 @@
                 <span class="spinner"></span>
             </button>
 
-            <!-- ===== VERIFY EMAIL BUTTON ===== -->
-            <button type="button" class="btn-verify" id="verifyBtn">
-                <span class="btn-text"><i class="fas fa-envelope-circle-check"></i> Verification Email ပြန်ပို့မည်</span>
-                <span class="spinner"></span>
-            </button>
-
             <div id="statusMsg" class="status-msg"></div>
         </form>
 
@@ -459,7 +405,6 @@
             getAuth, 
             signInWithEmailAndPassword, 
             onAuthStateChanged,
-            sendEmailVerification,
             GoogleAuthProvider,
             signInWithPopup
         } from "firebase/auth";
@@ -486,7 +431,6 @@
         const emailInput = document.getElementById('emailInput');
         const passwordInput = document.getElementById('passwordInput');
         const loginBtn = document.getElementById('loginBtn');
-        const verifyBtn = document.getElementById('verifyBtn');
         const googleBtn = document.getElementById('googleBtn');
         const statusMsg = document.getElementById('statusMsg');
 
@@ -504,7 +448,7 @@
             }
         }
 
-        // ===== GET USER ROLE FROM DATABASE =====
+        // ===== GET USER ROLE =====
         async function getUserRole(uid) {
             try {
                 const userRef = ref(db, `users/${uid}`);
@@ -519,28 +463,25 @@
             }
         }
 
-        // ===== SAVE USER TO DATABASE (Google Sign-In အတွက်) =====
+        // ===== SAVE USER (Google အတွက်) =====
         async function saveUserToDatabase(user) {
             try {
                 const userRef = ref(db, `users/${user.uid}`);
                 const snapshot = await get(userRef);
-
                 if (!snapshot.exists()) {
-                    // User အသစ်ဆိုရင် Database ထဲသိမ်း
                     await set(userRef, {
                         email: user.email,
                         displayName: user.displayName || user.email.split('@')[0],
                         role: 'user',
                         createdAt: Date.now()
                     });
-                    console.log('✅ New user saved to database');
                 }
             } catch (error) {
                 console.error('Error saving user:', error);
             }
         }
 
-        // ===== REDIRECT BASED ON ROLE =====
+        // ===== REDIRECT =====
         function redirectBasedOnRole(role, email) {
             if (email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
                 window.location.href = 'admin.html';
@@ -566,7 +507,6 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             showStatus('', '');
-            verifyBtn.style.display = 'none';
 
             const email = emailInput.value.trim();
             const password = passwordInput.value.trim();
@@ -583,18 +523,8 @@
                 const userCred = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCred.user;
 
-                // ===== EMAIL VERIFY CHECK =====
-                if (!user.emailVerified) {
-                    showStatus('⚠️ ကျေးဇူးပြု၍ သင့် email ကို အတည်ပြုလုပ်ပါ။ (Verify Link ကို Inbox/Spam မှာ စစ်ပါ)', 'error');
-
-                    verifyBtn.style.display = 'flex';
-                    verifyBtn.dataset.email = email;
-                    verifyBtn.dataset.password = password;
-
-                    loginBtn.classList.remove('loading');
-                    loginBtn.disabled = false;
-                    return;
-                }
+                // ===== ❌ Email Verify စစ်တာ ဖျောက်ထားတယ် =====
+                // if (!user.emailVerified) { ... } ← ဒီအပိုင်းကို ဖျောက်ထားတယ်
 
                 // ===== Get User Role =====
                 const role = await getUserRole(user.uid);
@@ -617,48 +547,9 @@
             loginBtn.disabled = false;
         });
 
-        // ===== VERIFY EMAIL BUTTON =====
-        verifyBtn.addEventListener('click', async () => {
-            const email = verifyBtn.dataset.email;
-            const password = verifyBtn.dataset.password;
-
-            if (!email || !password) {
-                showStatus('ကျေးဇူးပြု၍ အရင်ဆုံး Login ဝင်ကြည့်ပါ။', 'error');
-                return;
-            }
-
-            verifyBtn.classList.add('loading');
-            verifyBtn.disabled = true;
-
-            try {
-                const userCred = await signInWithEmailAndPassword(auth, email, password);
-                const user = userCred.user;
-
-                if (user.emailVerified) {
-                    showStatus('✅ သင့် Email ကို အတည်ပြုပြီးသား ဖြစ်နေပါသည်။ Login ပြန်ဝင်ပါ။', 'success');
-                    verifyBtn.style.display = 'none';
-                } else {
-                    await sendEmailVerification(user);
-                    showStatus('📩 Verification Email ကို ပြန်ပို့ပြီးပါပြီ။ Inbox (Spam အပါ) ကို စစ်ပါ။', 'success');
-                }
-
-            } catch (error) {
-                let msg = error.message;
-                if (error.code === 'auth/too-many-requests') {
-                    msg = 'အကြိမ်ကြိမ် ပို့ထားလို့ ခေတ္တစောင့်ပြီး ပြန်ကြိုးစားပါ။';
-                }
-                showStatus('❌ ' + msg, 'error');
-            }
-
-            verifyBtn.classList.remove('loading');
-            verifyBtn.disabled = false;
-        });
-
         // ===== GOOGLE SIGN IN =====
         googleBtn.addEventListener('click', async () => {
             showStatus('', '');
-            verifyBtn.style.display = 'none';
-
             googleBtn.classList.add('loading');
             googleBtn.disabled = true;
 
@@ -666,10 +557,7 @@
                 const result = await signInWithPopup(auth, googleProvider);
                 const user = result.user;
 
-                // ===== Save to Database (အသစ်ဆိုရင်) =====
                 await saveUserToDatabase(user);
-
-                // ===== Get User Role =====
                 const role = await getUserRole(user.uid);
 
                 showStatus(`✅ ကြိုဆိုပါတယ် ${user.displayName || user.email} !`, 'success');
@@ -682,9 +570,9 @@
                 if (error.code === 'auth/popup-closed-by-user') {
                     msg = 'Google Login ကို ပိတ်လိုက်ပါသည်။';
                 } else if (error.code === 'auth/popup-blocked') {
-                    msg = 'Popup ကို Browser က ပိတ်ထားပါသည်။ Popup ကို ခွင့်ပြုပါ။';
-                } else if (error.code === 'auth/cancelled-popup-request') {
-                    msg = 'Login ကို ပယ်ဖျက်လိုက်ပါသည်။';
+                    msg = 'Popup ကို Browser က ပိတ်ထားပါသည်။';
+                } else if (error.code === 'auth/unauthorized-domain') {
+                    msg = 'ဒီ Domain ကို Firebase မှာ ခွင့်မပြုထားပါ။ (Authorized Domains စစ်ပါ)';
                 }
                 showStatus('❌ ' + msg, 'error');
             }
@@ -696,21 +584,14 @@
         // ===== AUTO REDIRECT IF ALREADY LOGGED IN =====
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Google Sign-In ဆိုရင် Email Verify မလိုဘူး
-                // Email/Password ဆိုရင် Verify လိုတယ်
-                const isGoogleUser = user.providerData.some(
-                    provider => provider.providerId === 'google.com'
-                );
-
-                if (isGoogleUser || user.emailVerified) {
-                    const email = user.email || '';
-                    const role = await getUserRole(user.uid);
-                    redirectBasedOnRole(role, email);
-                }
+                // ===== Email Verify မစစ်တော့ဘူး =====
+                const email = user.email || '';
+                const role = await getUserRole(user.uid);
+                redirectBasedOnRole(role, email);
             }
         });
 
-        console.log('✅ login.html loaded with Google Sign-In');
+        console.log('✅ login.html loaded (Email Verify မလိုဘဲ)');
     </script>
 
 </body>
