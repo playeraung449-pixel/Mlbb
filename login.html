@@ -224,7 +224,6 @@
             color: #51cf66;
         }
 
-        /* ===== DIVIDER ===== */
         .divider {
             display: flex;
             align-items: center;
@@ -246,7 +245,6 @@
             letter-spacing: 1px;
         }
 
-        /* ===== GOOGLE BUTTON ===== */
         .btn-google {
             width: 100%;
             padding: 14px;
@@ -475,19 +473,22 @@
                         role: 'user',
                         createdAt: Date.now()
                     });
+                    console.log('✅ New Google user saved');
                 }
             } catch (error) {
                 console.error('Error saving user:', error);
             }
         }
 
-        // ===== REDIRECT =====
+        // ===== REDIRECT BASED ON ROLE (Email/Password အတွက်) =====
         function redirectBasedOnRole(role, email) {
+            // Admin စစ်ဆေး
             if (email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
                 window.location.href = 'admin.html';
                 return;
             }
 
+            // Role ပေါ်မူတည်ပြီး လမ်းကြောင်းခွဲ
             switch (role) {
                 case 'winner':
                     window.location.href = 'reward.html';
@@ -523,10 +524,7 @@
                 const userCred = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCred.user;
 
-                // ===== ❌ Email Verify စစ်တာ ဖျောက်ထားတယ် =====
-                // if (!user.emailVerified) { ... } ← ဒီအပိုင်းကို ဖျောက်ထားတယ်
-
-                // ===== Get User Role =====
+                // Email Verify မစစ်တော့ဘူး (မင်းလိုချင်တဲ့အတိုင်း)
                 const role = await getUserRole(user.uid);
 
                 showStatus(`✅ ကြိုဆိုပါတယ် ${user.displayName || user.email} !`, 'success');
@@ -557,12 +555,13 @@
                 const result = await signInWithPopup(auth, googleProvider);
                 const user = result.user;
 
+                // ===== Save User to Database =====
                 await saveUserToDatabase(user);
-                const role = await getUserRole(user.uid);
 
+                // ===== ✅ Google User → index.html =====
                 showStatus(`✅ ကြိုဆိုပါတယ် ${user.displayName || user.email} !`, 'success');
                 setTimeout(() => {
-                    redirectBasedOnRole(role, user.email);
+                    window.location.href = 'index.html';
                 }, 1200);
 
             } catch (error) {
@@ -570,7 +569,9 @@
                 if (error.code === 'auth/popup-closed-by-user') {
                     msg = 'Google Login ကို ပိတ်လိုက်ပါသည်။';
                 } else if (error.code === 'auth/popup-blocked') {
-                    msg = 'Popup ကို Browser က ပိတ်ထားပါသည်။';
+                    msg = 'Popup ကို Browser က ပိတ်ထားပါသည်။ Popup ကို ခွင့်ပြုပါ။';
+                } else if (error.code === 'auth/cancelled-popup-request') {
+                    msg = 'Login ကို ပယ်ဖျက်လိုက်ပါသည်။';
                 } else if (error.code === 'auth/unauthorized-domain') {
                     msg = 'ဒီ Domain ကို Firebase မှာ ခွင့်မပြုထားပါ။ (Authorized Domains စစ်ပါ)';
                 }
@@ -584,14 +585,31 @@
         // ===== AUTO REDIRECT IF ALREADY LOGGED IN =====
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // ===== Email Verify မစစ်တော့ဘူး =====
                 const email = user.email || '';
+
+                // ===== Admin ဆိုရင် admin.html =====
+                if (email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+                    window.location.href = 'admin.html';
+                    return;
+                }
+
+                // ===== Google User ဆိုရင် index.html =====
+                const isGoogleUser = user.providerData.some(
+                    provider => provider.providerId === 'google.com'
+                );
+
+                if (isGoogleUser) {
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                // ===== Email/Password User ဆိုရင် Role ပေါ်မူတည်ပြီး =====
                 const role = await getUserRole(user.uid);
                 redirectBasedOnRole(role, email);
             }
         });
 
-        console.log('✅ login.html loaded (Email Verify မလိုဘဲ)');
+        console.log('✅ login.html loaded (Google → index.html, Admin: playeraung449@gmail.com)');
     </script>
 
 </body>
